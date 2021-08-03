@@ -1,7 +1,7 @@
 class Deck {
     constructor(){
         this.initialize()
-        // this.shuffle()
+        this.shuffle()
     }
     
     initialize(){

@@ -20,12 +20,12 @@ const Card = (props)=>{
         )
     }
 
-    let selectedClass = `card__clickable${props.selected ? ' selected':''}`
-
+    let classString = `card__clickable${props.selected ? ' selected':''}`
+    classString += `${props.hinted?' hinted':''}`
     return(
         <div onClick={handleCardClick} 
         className={`card ${props.taken? 'taken':''}`}>
-            <div className={selectedClass}></div>
+            <div className={classString}></div>
 
             <div key={`${props.card.amount} 
             ${props.card.color} 
