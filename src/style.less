@@ -6,7 +6,7 @@
 @shape-width: 85px;
 
 @shape-height1: 17px;
-@shape-width1: 76px;
+@shape-width1: 77px;
 
 @card-color: #ffb;
 
@@ -107,9 +107,22 @@ html, body{
   
           .border {
             -webkit-mask-size: @shape-width1 @shape-height1;
-            mask-size: @shape-width1 @shape-height1;
+            mask-size: @shape-width @shape-height;
             width: @shape-width1;
             height: @shape-height1;
+
+            &.diamond {
+              -webkit-mask-image: url(/src/assets/diamond_smaller.svg);
+              mask-image: url(/src/assets/diamond_smaller.svg);
+            }
+            &.oval {
+              -webkit-mask-image: url(/src/assets/oval_smaller.svg);
+              mask-image: url(/src/assets/oval_smaller.svg);
+            }
+            &.squiggle {
+              -webkit-mask-image: url(/src/assets/squiggle_smaller.svg);
+              mask-image: url(/src/assets/squiggle_smaller.svg);
+            }
           }
         }
   
@@ -120,7 +133,7 @@ html, body{
   
         .oval {
           -webkit-mask-image: url(/src/assets/oval.svg);
-          mask-image: url(/src/assets/oval.svg);
+          mask-image: url(/src/assets/oval_smaller.svg);
         }
   
         .squiggle {

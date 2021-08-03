@@ -5,7 +5,6 @@ import { useDispatch } from 'react-redux'
 const Card = (props)=>{
     const dispatch = useDispatch()
 
-    //обработка клика по карте
     function handleCardClick(e){
         let type = props.selected ? 'deselect' : 'select'
         dispatch({type:`card/${type}`,payload:props.card})

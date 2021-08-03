@@ -2,7 +2,7 @@ import './style.less'
 import {render} from 'react-dom'
 import React from 'react'
 import App from './components/App'
-import {Deck} from './deck'
+import {Deck} from './game/deck'
 import reducer from './reducer'
 import { createStore } from 'redux'
 import { Provider } from 'react-redux'
@@ -15,7 +15,7 @@ const store = createStore(reducer)
 
 store.subscribe(()=>{
     let state = store.getState()
-    if (state.collected){
+    if (state.collectedSet){
         store.dispatch({type:'set'})
     }
 })

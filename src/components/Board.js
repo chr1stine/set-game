@@ -4,7 +4,6 @@ import Card from './Card'
 import { useSelector } from 'react-redux'
 
 const Board = ({cardsOnTable, takenCards, selectedCards}) => {
-    // массив компонент выложенных карт
     let cardComponents = cardsOnTable.map(card => {
         let selected = selectedCards.some(c=>{return _.isEqual(c,card)}) // выделенные карты
         let taken = takenCards.some(c=>{return _.isEqual(c,card)}) // карты под сброс

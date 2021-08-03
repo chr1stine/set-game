@@ -1,5 +1,10 @@
 class Deck {
     constructor(){
+        this.initialize()
+        // this.shuffle()
+    }
+    
+    initialize(){
         this.cards = new Array()
         let colors = ['red','green','purple']
         let shapes = ['oval','diamond','squiggle']
@@ -16,16 +21,15 @@ class Deck {
                 })
             })
         })
-        // shuffle(this.cards)
-    }      
-}
+    }
 
-function shuffle(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        let j = Math.floor(Math.random() * (i + 1));
-        let temp = array[i];
-        array[i] = array[j];
-        array[j] = temp;
+    shuffle(){
+        for (let i = this.cards.length - 1; i > 0; i--) {
+            let j = Math.floor(Math.random() * (i + 1));
+            let temp = this.cards[i];
+            this.cards[i] = this.cards[j];
+            this.cards[j] = temp;
+        }
     }
 }
 
