@@ -1,0 +1,184 @@
+@card-height: 150px;
+@card-width: 105px;
+@card-margin: 15px;
+
+@shape-height: 20px;
+@shape-width: 85px;
+
+@shape-height1: 17px;
+@shape-width1: 76px;
+
+@card-color: #ffb;
+
+html, body{
+  height: 100%;
+  margin: 0px;
+  padding: 0px;
+}
+
+#container{
+  background-color: #dfd;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  #board{
+    display: grid;
+    background-color: #ffb;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    width: @card-margin*8+@card-width*4;
+
+    margin-top: 100px;
+
+    .card {
+
+      &.taken {
+        opacity: 0;
+        transition: opacity .5s;
+
+        display: none;
+        transition: display 1s;
+      }
+
+      .card__clickable {
+        height: @card-height;
+        width: @card-width;
+        position: absolute;
+        z-index: 1;
+  
+        margin: @card-margin;
+        height: @card-height;
+
+        border-radius: 10px;
+
+        outline: 0px solid rgba(0,0,255,.2);
+        box-shadow: 0px rgba(200,200,255,1),
+        0px rgba(200,200,255,1),
+        0px rgba(200,200,255,1),
+        0px rgba(200,200,255,1);
+        transition: .1s;
+        
+        &:hover {
+          box-shadow: 2px 2px 2px rgba(0,0,0,.2);
+          transition: .1s;
+        }
+
+        &.selected {
+          box-shadow: 3px 3px rgba(150,150,255,1),
+          -3px 3px rgba(150,150,255,1),
+          3px -3px rgba(150,150,255,1),
+          -3px -3px rgba(150,150,255,1);
+          
+          transition: .1s;
+        }
+      }
+      
+      .card__content {
+        background-color: #fff;
+        margin: @card-margin;
+        height: @card-height;
+        width: @card-width;
+        
+        transition: .5s;
+  
+        border-radius: 10px;
+  
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+  
+        .shape{
+          margin: 5px;
+          padding: 0px;
+          
+          -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  
+          -webkit-mask-size:@shape-width @shape-height;
+          mask-size:@shape-width @shape-height;
+          width:@shape-width;
+          height: @shape-height;
+  
+          display: flex;
+          justify-content: center;
+          align-items: center;
+  
+          .border {
+            -webkit-mask-size: @shape-width1 @shape-height1;
+            mask-size: @shape-width1 @shape-height1;
+            width: @shape-width1;
+            height: @shape-height1;
+          }
+        }
+  
+        .diamond {
+          -webkit-mask-image: url(/src/assets/diamond.svg);
+          mask-image: url(/src/assets/diamond.svg);
+        }
+  
+        .oval {
+          -webkit-mask-image: url(/src/assets/oval.svg);
+          mask-image: url(/src/assets/oval.svg);
+        }
+  
+        .squiggle {
+          -webkit-mask-image: url(/src/assets/squiggle.svg);
+          mask-image: url(/src/assets/squiggle.svg);
+        } 
+  
+        .red {
+          background-color: red;
+        }
+  
+        .green {
+          background-color: green;
+        }
+  
+        .purple {
+          background-color: purple;
+        }
+  
+        .red.striped {
+          background-color: white;
+          background-image: linear-gradient(to right, red, red 1px, white 1px, white);
+          background-size: 3px;
+        }
+        
+        .green.striped {
+          background-color: white;
+          background-image: linear-gradient(to right, green, green 1px, white 1px, white);
+          background-size: 3px;
+        }
+        
+        .purple.striped {
+          background-color: white;
+          background-image: linear-gradient(to right, purple, purple 1px, white 1px, white);
+          background-size: 3px;
+        }
+        
+        .red.solid {
+          background-color: red;
+        }
+        
+        .green.solid {
+          background-color: green;
+        }
+        
+        .purple.solid {
+          background-color: purple;
+        }
+  
+        .void.border {
+          background-color: white;
+        }
+      }
+    }
+
+  }
+
+  #start_game {
+    margin-top: 20px;
+  }
+}
