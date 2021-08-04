@@ -1,5 +1,6 @@
 import { isEqual } from 'lodash'
-import isValidSet from './game/rules'
+import {isValidSet,rules} from './game/rules'
+import {Deck} from './game/deck'
 
 let intitalState = { 
     selectedCards: [],
@@ -11,11 +12,30 @@ let intitalState = {
     gameStarted: false,
     extraCards: 0,
     cardsInitialized: false,
-    hint: null
+    hint: null,
+    setCount: 0,
+    hintCount: 0,
+    timeStart: null,
+    timeEnd: null,
+    deck: null,
+    rules: rules
 }
 
 function reducer(state = intitalState,action){
+    // выложены карты
+    if (action.type === 'cards/initialized'){
+        state.cardsInitialized = true;
+    }
 
+    // игра началась, генерируем колоду, засекаем время
+    if (action.type === 'game/started'){
+        state.gameStarted = true;
+        state.deck = new Deck();
+        state.timeStart = action.payload.getTime();
+        console.log(`game sarted at ${state.timeStart}`)
+    }
+
+    // выделена карта
     if (action.type === 'card/select'){
         let card = action.payload
         state.selectedCards = [...state.selectedCards, card]
@@ -27,6 +47,7 @@ function reducer(state = intitalState,action){
         }
     }
     
+    // снято выделение с карты
     if (action.type === 'card/deselect'){
         state.collectedSet = false
         state.validSet = false
@@ -34,49 +55,19 @@ function reducer(state = intitalState,action){
         let card = action.payload
         state.selectedCards = state.selectedCards.filter(c=>{return !isEqual(c,card)})
     }
-
-    if (action.type === 'set'){
-        state.validSet = isValidSet(state.selectedCards)
-        
-        if (state.validSet){
-            console.log(`congrats! valid set`)
-            state.takenCards = [...state.takenCards,...state.selectedCards]
-        }else{
-            console.log(`sorry, set is incorrect`)
-        }
-
-        state.selectedCards = []
-        state.collectedSet = false
-    }
-
-    if (action.type === 'set/taken'){
-        state.takenCards = []
-        if (state.extraCards > 0){
-            state.extraCards -= 3;
-        }
-    }
-
-    if (action.type === 'game/started'){
-        state.gameStarted = true
-    }
-
-    if (action.type === 'cards/finished'){
-        state.cardsFinished = true
-    }
     
+    // было запрошено 3 дополнительных карты
     if (action.type === 'game/extra'){
         state.extraCards += 3
     }
 
-    if (action.type === 'cards/initialized'){
-        state.cardsInitialized = true;
-    }
-
+    // была запрошена подсказка
     if (action.type === 'hint'){
         state.hint = true;
+        state.hintCount++;
         let cards = action.payload;
         let found = false;
-        // TODO: эффективно искать сет, пока что - жадно
+
         outer: for(let i = 0; i < cards.length; i++){
             for (let j = i+1; j < cards.length; j++){
                 for (let k = j+1; k < cards.length; k++){
@@ -89,15 +80,69 @@ function reducer(state = intitalState,action){
                 }
             }
         }
+
         if (!found){
-            if (state.cardsFinished){
-                state.gameFinished = true;
-            }
-            state.hint = []; // подсказка, что среди выложенных карт нет сета, значит надо выкладывать новые
+            state.hint = []; // подсказка, что среди выложенных карт нет сета
         }
     }
 
-    console.log(`now extraCards is ${state.extraCards}`)
+    // было выделено три карты
+    if (action.type === 'set'){
+        state.validSet = isValidSet(state.selectedCards)
+        
+        if (state.validSet){
+            console.log(`congrats! valid set`)
+            state.takenCards = [...state.selectedCards]
+        }else{
+            console.log(`sorry, set is incorrect`)
+        }
+
+        state.selectedCards = []
+        state.collectedSet = false
+    }
+
+    // выделенный сет был убран со стола
+    if (action.type === 'set/taken'){
+        state.takenCards = []
+        if (state.extraCards > 0){
+            state.extraCards -= 3;
+        }
+        state.setCount++;
+    }
+
+    // карты закончились
+    if (action.type === 'cards/finished'){
+        state.cardsFinished = true
+        console.log(`cards finidhed!`)
+    }
+
+    // игра закончилась
+    if (action.type === 'game/finished'){
+        state.gameFinished = true;
+        state.timeEnd = action.payload.getTime();
+        console.log(`game finished at ${state.timeEnd}`)
+    }
+    
+    if (action.type === 'game/restart'){
+        state = { 
+            selectedCards: [],
+            takenCards: [],
+            collectedSet: false,
+            validSet: false,
+            cardsFinished: false,
+            gameFinished: false,
+            gameStarted: false,
+            extraCards: 0,
+            cardsInitialized: false,
+            hint: null,
+            setCount: 0,
+            hintCount: 0,
+            timeStart: null,
+            timeEnd: null,
+            deck: null,
+            rules: rules
+        }
+    }
 
     return state
 }

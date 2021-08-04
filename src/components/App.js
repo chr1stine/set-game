@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Board from './Board'
 
-const App = ({deck})=>{
+const App = ()=>{
     // вытягивает из колоды следующие amount карт
     function pullNewCards(amount){
         let cards = []
@@ -18,7 +18,7 @@ const App = ({deck})=>{
     }
 
     function handleStartGame(){
-        dispatch({type:'game/started'})
+        dispatch({type:'game/started',payload:new Date()})
     }
 
     function handlePullExtraCards(){
@@ -26,10 +26,31 @@ const App = ({deck})=>{
     }
 
     function handleHint(){
-        dispatch({type:'hint',payload:cardsOnTable})
+        if (cardsFinished){
+            dispatch({type:'game/finished',payload:new Date()})
+        }else{
+            dispatch({type:'hint',payload:cardsOnTable})
+        }
+    }
+
+    function computePlayTime(){
+        let timeSpent = (timeEnd-timeStart)/1000; // в секундах
+        let hh = timeSpent > 3600 ? timeSpent / 3600 : 0;
+        timeSpent %= 3600;
+        let mm = timeSpent > 60 ? timeSpent / 60 : 0;
+        timeSpent %= 60;
+        let ss = timeSpent;
+        return `${hh != 0 ? `${hh}ч ` : ''+ mm != 0? `${mm}м `:''+`${ss}с`}`;
+    }
+
+    function restart(){
+        setCardsOnTable([])
+        dispatch({type:'game/restart'})
     }
 
     const dispatch = useDispatch()
+    const rules = useSelector(state=>state.rules)
+    const deck = useSelector(state=>state.deck);
     const takenCards = useSelector(state=>state.takenCards) // собранные в сет
     const selectedCards = useSelector(state=>state.selectedCards) // выделенные
     const gameFinished = useSelector(state=>state.gameFinished) // закончена ли игра
@@ -39,47 +60,72 @@ const App = ({deck})=>{
     const hint = useSelector(state=>state.hint);
     const cardsFinished = useSelector(state=>state.cardsFinished)
     const [cardsOnTable,setCardsOnTable] = useState([]) // выложенные на стол
+    const setCount = useSelector(state=>state.setCount);
+    const hintCount = useSelector(state=>state.hintCount);
+    const timeStart = useSelector(state=>state.timeStart);
+    const timeEnd = useSelector(state=>state.timeEnd);
 
-    // console.log(`there are ${cardsOnTable.length} cards on table`)
+    if (gameStarted && !gameFinished){
+        // первичное выкладывание карт
+        if (!cardsInitialized){
+            setCardsOnTable(pullNewCards(12))
+            dispatch({type:'cards/initialized'})
+        }else if (!gameFinished){
+            // убирание правильного сета, если собран, и выкладывание новых карт по надобности
+            if (takenCards.length > 0){
+                let newCards = cardsOnTable.filter(c=>{
+                    return !_.includes(takenCards,c)
+                })
 
-    // первичное выкладывание 12 карт
-    if (!cardsInitialized &&
-        !gameFinished && 
-         gameStarted){
-        setCardsOnTable(pullNewCards(12))
-        dispatch({type:'cards/initialized'})
-    }
+                setCardsOnTable(newCards)
 
-    // убирание правильного сета, если собран, и выкладывание новых карт по надобности
-    if (takenCards.length > 0){
-        let newCards = cardsOnTable.filter(c=>{
-            return !_.includes(takenCards,c)
-        })
+                dispatch({type:'set/taken'})
+            }
 
-        setCardsOnTable(newCards)
+            // доложить новых карт, если требуется и возможно
+            if (cardsOnTable.length < 12 + extraCards && !cardsFinished){
+                setCardsOnTable([...cardsOnTable,...pullNewCards(3)])
+            }
 
-        dispatch({type:'set/taken'})
-    }
-
-    if (cardsInitialized && cardsOnTable.length < 12 + extraCards && !cardsFinished){
-        setCardsOnTable([...cardsOnTable,...pullNewCards(3)])
-    }
-
-    if (gameFinished){
-        alert('congrats! you won')
+            if (cardsOnTable.length === 0){
+                dispatch({type:'game/finished',payload:new Date()})
+            }
+        }else{
+            // игра окончена
+            dispatch({type:'game/finished',payload:new Date()});
+        }
     }
 
     return (
         <div id="container">
+            <div id="modal" className={gameFinished ? '':'hidden'}>
+                <div className='modal__content'>
+                    <h3>Игра пройдена!</h3>
+                    <p>{`Счёт: ${setCount}`}</p>
+                    <p>{`Подсказок запрошено: ${hintCount}`}</p>
+                    <p>{`Времени пройдено: ${timeEnd != null ? computePlayTime():''}`}</p>
+                    <button className='btn btn-primary' 
+                    onClick={restart}>Ещё раз</button>
+                </div>
+            </div>
+            <div id='sidebar' className={`${gameStarted ? '' : 'hidden'}`}>
+                <div id="rules">
+                    <h4>Правила</h4>
+                </div>
+                <h2>Счёт: {setCount}</h2>
+                <h2>Подсказок: {hintCount}</h2>
+            </div>
             <Board extraCards={extraCards} cardsOnTable={cardsOnTable} 
                 takenCards={takenCards} 
                 selectedCards={selectedCards} hint={hint} />
 
-            <button disabled={gameStarted} onClick={handleStartGame} id='start_game'>Начать игру</button>
+            <div id="buttons">
+                <button className='btn btn-outline-primary' disabled={gameStarted} onClick={handleStartGame} id='start_game'>Начать игру</button>
 
-            <button className={hint?.length == 0 && !cardsFinished ? 'hint' : ''} disabled={extraCards === 6 ||  !gameStarted} onClick={handlePullExtraCards} id='pull_extra_cards'>Выложить три карты</button>
+                <button className={hint?.length == 0 && !cardsFinished ? 'btn btn-primary' : 'btn btn-outline-primary'} disabled={extraCards === 6 ||  !gameStarted || cardsFinished} onClick={handlePullExtraCards} id='pull_extra_cards'>Выложить три карты</button>
 
-            <button onClick={handleHint}>Подсказка</button>
+                <button className='btn btn-outline-primary' disabled={!gameStarted} onClick={handleHint}>Подсказка</button>
+            </div>
         </div>
     )
 

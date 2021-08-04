@@ -1,14 +1,15 @@
 @card-height: 150px;
 @card-width: 105px;
+
 @card-margin: 15px;
 
 @shape-height: 20px;
 @shape-width: 85px;
 
-@shape-height1: 17px;
-@shape-width1: 77px;
+@shape-height-border: 17px;
+@shape-width-border: 75px;
 
-@card-color: #ffb;
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap');
 
 .mask-mixin(@shape){
   -webkit-mask-image: url(~"/src/assets/@{shape}.svg");
@@ -28,165 +29,215 @@ html, body{
   height: 100%;
   margin: 0px;
   padding: 0px;
-}
 
-#container{
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  #board{
-    display: grid;
-    grid-template-columns: repeat(4,1fr);
-    width: @card-margin*8+@card-width*4;
-
-    margin-top: 50px;
-
-    &.extra_3{
-      grid-template-columns: repeat(5,1fr);
-    }
-
-    &.extra_6{
-      grid-template-columns: repeat(6,1fr);
-    }
-
-    .card {
-
-      &.taken {
-        opacity: 0;
-        transition: opacity .5s;
-
-        display: none;
-        transition: display 1s;
+  #container{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  
+    #sidebar {
+      font-family: 'Roboto', sans-serif;
+      background-color: white;
+      position: fixed;
+      bottom: 30px;
+      left: 30px;
+      z-index: 0;
+  
+      &.hidden{
+        visibility: hidden;
       }
 
-      .card__clickable {
-        height: @card-height;
-        width: @card-width;
-        position: absolute;
-        z-index: 1;
-  
-        margin: @card-margin;
-        height: @card-height;
-
-        border-radius: 10px;
-
-        outline: 0px solid rgba(0,0,255,.2);
-        box-shadow: 0px rgba(200,200,255,1),
-        0px rgba(200,200,255,1),
-        0px rgba(200,200,255,1),
-        0px rgba(200,200,255,1);
-        transition: .1s;
-
-        &.hinted {
-          box-shadow: 8px 8px rgba(150,150,255,1),
-          -8px 8px rgba(150,150,255,1),
-          8px -8px rgba(150,150,255,1),
-          -8px -8px rgba(150,150,255,1);
-          
-          transition: .1s;
-        }
-
-        &.selected {
-          box-shadow: 3px 3px rgba(150,150,255,1),
-          -3px 3px rgba(150,150,255,1),
-          3px -3px rgba(150,150,255,1),
-          -3px -3px rgba(150,150,255,1);
-          
-          transition: .1s;
-        }
-      }
-      
-      .card__content {
-        background-color: #fff;
-        margin: @card-margin;
-        height: @card-height;
-        width: @card-width;
-        
-        transition: .5s;
-  
-        border: black solid 1px;
-        border-radius: 10px;
-  
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-  
-        .shape{
-          margin: 5px;
-          padding: 0px;
-          
-          -webkit-mask-repeat: no-repeat;
-          mask-repeat: no-repeat;
-  
-          -webkit-mask-size:@shape-width @shape-height;
-          mask-size:@shape-width @shape-height;
-          width:@shape-width;
-          height: @shape-height;
-  
-          display: flex;
-          justify-content: center;
-          align-items: center;
-  
-          .border {
-            -webkit-mask-size: @shape-width1 @shape-height1;
-            mask-size: @shape-width @shape-height;
-            width: @shape-width1;
-            height: @shape-height1;
-
-            &.diamond {
-              .mask-mixin(diamond_smaller);
-            }
-            &.oval {
-              .mask-mixin(oval_smaller);
-            }
-            &.squiggle {
-              .mask-mixin(squiggle_smaller);
-            }
+      #rules{
+        width: 250px;
+        &:hover{
+          &::before {
+            content: 'Когда-нибудь здесь будут правила';
+            position: relative;
+            bottom: 100px
           }
         }
+      }
+    }
   
-        .diamond {
-          .mask-mixin(diamond);
-        }
-        .oval {
-          .mask-mixin(oval);
-        }
-        .squiggle {
-          .mask-mixin(squiggle);
-        } 
+    #board{
+      display: grid;
+      grid-template-columns: repeat(4,1fr);
+      width: @card-margin*8+@card-width*4;
   
-        .red {
-          .color-mixin(red)
-        }
-        .green {
-          .color-mixin(green)
-        }
-        .purple {
-          .color-mixin(purple)
+      margin-top: 50px;
+  
+      &.extra_3{
+        grid-template-columns: repeat(5,1fr);
+      }
+  
+      &.extra_6{
+        grid-template-columns: repeat(6,1fr);
+      }
+  
+      .card_ {
+  
+        &.taken {
+          opacity: 0;
+          transition: opacity .5s;
+  
+          display: none;
+          transition: display 1s;
         }
   
-        .void.border {
-          background-color: white;
+        .card__clickable {
+          height: @card-height;
+          width: @card-width;
+          position: absolute;
+          z-index: 1;
+    
+          margin: @card-margin;
+          height: @card-height;
+  
+          border-radius: 10px;
+  
+          outline: 0px solid rgba(0,0,255,.2);
+          box-shadow: 0px rgba(200,200,255,1),
+          0px rgba(200,200,255,1),
+          0px rgba(200,200,255,1),
+          0px rgba(200,200,255,1);
+          transition: .1s;
+  
+          &.hinted {
+            box-shadow: 8px 8px rgba(150,150,255,1),
+            -8px 8px rgba(150,150,255,1),
+            8px -8px rgba(150,150,255,1),
+            -8px -8px rgba(150,150,255,1);
+            
+            transition: .1s;
+          }
+  
+          &.selected {
+            box-shadow: 3px 3px rgba(150,150,255,1),
+            -3px 3px rgba(150,150,255,1),
+            3px -3px rgba(150,150,255,1),
+            -3px -3px rgba(150,150,255,1);
+            
+            transition: .1s;
+          }
+  
+          &.wrong {
+            box-shadow: 3px 3px rgba(255,150,150,1),
+            -3px 3px rgba(255,150,150,1),
+            3px -3px rgba(255,150,150,1),
+            -3px -3px rgba(255,150,150,1);
+            
+            transition: .1s;
+          }
+        }
+        
+        .card__content {
+          background-color: #fff;
+          margin: @card-margin;
+          height: @card-height;
+          width: @card-width;
+          
+          transition: .5s;
+    
+          border: black solid 1px;
+          border-radius: 10px;
+    
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+    
+          .shape{
+            margin: 5px;
+            padding: 0px;
+            
+            -webkit-mask-repeat: no-repeat;
+            mask-repeat: no-repeat;
+    
+            -webkit-mask-size:@shape-width @shape-height;
+            mask-size:@shape-width @shape-height;
+            width:@shape-width;
+            height: @shape-height;
+    
+            display: flex;
+            justify-content: center;
+            align-items: center;
+    
+            .border_ {
+              -webkit-mask-size: @shape-width-border @shape-height-border;
+              mask-size: @shape-width @shape-height;
+              width: @shape-width-border;
+              height: @shape-height-border;
+  
+              &.diamond {
+                .mask-mixin(diamond_smaller);
+              }
+              &.oval {
+                .mask-mixin(oval_smaller);
+              }
+              &.squiggle {
+                .mask-mixin(squiggle_smaller);
+              }
+            }
+          }
+    
+          .diamond {
+            .mask-mixin(diamond);
+          }
+          .oval {
+            .mask-mixin(oval);
+          }
+          .squiggle {
+            .mask-mixin(squiggle);
+          } 
+    
+          .red {
+            .color-mixin(red)
+          }
+          .green {
+            .color-mixin(green)
+          }
+          .purple {
+            .color-mixin(purple)
+          }
+    
+          .void.border_ {
+            background-color: white;
+          }
+        }
+      }
+  
+    }
+  
+    #buttons > *{
+      margin: 5px;
+    }
+  
+    #modal {
+      &.hidden {
+        display: none;
+      }
+      z-index: 2;
+      position:absolute;
+      height: 100%;
+      width: 100%;
+      background-color: rgba(0,0,0,.5);
+  
+      .modal__content{
+        position: relative;
+        background-color: white;
+        width: 45%;
+        top: 30%;
+        margin: auto;
+        text-align: center;
+        padding: 20px;
+        border-radius: 10px;
+  
+        p {
+          margin: 5px;
         }
       }
     }
-
-  }
-
-  #start_game {
-    margin-top: 20px;
-  }
-
-  #pull_extra_cards {
-    box-shadow: 0px 0px 0px solid rgba(150,150,255,.5);
-    &.hint {
-      box-shadow: 10px 10px 10px solid rgba(150,150,255,.5),
-      -10px 10px 10px solid rgba(150,150,255,.5),
-      10px -10px 10px solid rgba(150,150,255,.5),
-      -10px -10px 10px solid rgba(150,150,255,.5)
-    }
+  
   }
 }

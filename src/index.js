@@ -7,12 +7,12 @@ import reducer from './reducer'
 import { createStore } from 'redux'
 import { Provider } from 'react-redux'
 
-// генерирование новой колоды
-const deck = new Deck()
+import bootstrap from 'bootstrap/dist/css/bootstrap.min.css'
 
 // инициализация хранилища
 const store = createStore(reducer)
 
+// опопвещение, что собран сет
 store.subscribe(()=>{
     let state = store.getState()
     if (state.collectedSet){
@@ -22,7 +22,7 @@ store.subscribe(()=>{
 
 render(
     <Provider store={store}>
-        <App deck={deck} />
+        <App />
     </Provider>,
     document.getElementById('root')
 )
