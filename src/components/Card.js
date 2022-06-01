@@ -1,41 +1,47 @@
-import React from 'react'
-import { useDispatch } from 'react-redux'
+import React, { useEffect, useLayoutEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { cardDeselected, cardSelected, wrongSetBlinked } from '../redux/boardSlice';
 
+const Card = ({ selected, taken, hinted, wrong, card }) => {
+  const dispatch = useDispatch();
 
-const Card = (props)=>{
-    const dispatch = useDispatch()
-
-    function handleCardClick(e){
-        let type = props.selected ? 'deselect' : 'select'
-        dispatch({type:`card/${type}`,payload:props.card})
-    }
-
-    // отрисовка содержимого карты
-    let shapes = new Array(props.card.amount)
-    for (let i=1;i<=props.card.amount;i++){
-        shapes.push(
-                <div key={`${props.card.shape} ${props.card.amount}_${i} ${props.card.shading} ${props.card.color}`} className={`shape ${props.card.shape} ${props.card.color}`}>
-                    <div className={`border_ ${props.card.shape} ${props.card.color} ${props.card.shading}`}></div>
-                </div>
-        )
-    }
-
-    let classString = `card__clickable${props.selected ? ' selected':''}${props.incorrect ? ' wrong':''}${props.correct ? ' correct':''}`
-    classString += `${props.hinted?' hinted':''}`
-    return(
-        <div onClick={handleCardClick} 
-        className={`card_ ${props.taken? 'taken':''}`}>
-            <div className={classString}></div>
-
-            <div key={`${props.card.amount} 
-            ${props.card.color} 
-            ${props.card.shading} 
-            ${props.card.shape}`} 
-            className={`card__content`}>
-                {shapes}
-            </div>
+  function drawCard() {
+    const shapes = new Array(card.amount);
+    for (let i = 1; i <= card.amount; i++) {
+      shapes.push(
+        <div
+          key={`${card.shape} ${card.amount}_${i} ${card.shading} ${card.color}`}
+          className={`shape ${card.shape} ${card.color}`}>
+          <div className={`border_ ${card.shape} ${card.color} ${card.shading}`}></div>
         </div>
-    )
-}
+      );
+    }
+    return shapes;
+  }
 
-export default Card
+  useEffect(async () => {
+    async function stopBlinkingAfterWait() {
+      await setTimeout(() => dispatch(wrongSetBlinked(card)), 500);
+    }
+    if (wrong) stopBlinkingAfterWait();
+  }, [wrong]);
+
+  drawCard();
+
+  return (
+    <div
+      onClick={() => {
+        dispatch(selected ? cardDeselected({ card }) : cardSelected({ card }));
+      }}
+      className={`card_ ${taken ? 'taken' : ''} ${wrong ? 'wrong' : ''}`}>
+      <div
+        className={`card__clickable${selected ? ' selected' : ''}${wrong ? ' wrong' : ''}${
+          hinted ? ' hinted' : ''
+        }`}></div>
+
+      <div className={`card__content`}>{drawCard()}</div>
+    </div>
+  );
+};
+
+export default Card;

@@ -1,28 +1,25 @@
-import './style.less'
-import {render} from 'react-dom'
-import React from 'react'
-import App from './components/App'
-import {Deck} from './game/deck'
-import reducer from './reducer'
-import { createStore } from 'redux'
-import { Provider } from 'react-redux'
-
-import bootstrap from 'bootstrap/dist/css/bootstrap.min.css'
-
-// инициализация хранилища
-const store = createStore(reducer)
-
-// опопвещение, что собран сет
-store.subscribe(()=>{
-    let state = store.getState()
-    if (state.collectedSet){
-        store.dispatch({type:'set'})
-    }
-})
+import './style.less';
+import { render } from 'react-dom';
+import React from 'react';
+import App from './components/App';
+import Rules from './components/Rules';
+import store from './redux/store';
+import { Provider } from 'react-redux';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 render(
-    <Provider store={store}>
-        <App />
-    </Provider>,
-    document.getElementById('root')
-)
+  <Router>
+    <Routes>
+      <Route
+        path="/"
+        element={
+          <Provider store={store}>
+            <App />
+          </Provider>
+        }></Route>
+      <Route path="/rules" element={<Rules />}></Route>
+    </Routes>
+  </Router>,
+  document.getElementById('root')
+);
