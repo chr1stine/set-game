@@ -25,3 +25,17 @@ jobs:
       - run: npm ci
       - run: npm run build --if-present
       - run: npm test
+  
+  sync-branch:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+
+      - name: Merge master -> production
+        uses: devmasx/merge-branch@master
+        with:
+          type: now
+          from_branch: master
+          target_branch: production
+          github_token: ${{ github.token }}
