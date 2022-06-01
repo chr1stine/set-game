@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`App renders 1`] = `
+<div
+  id="container"
+>
+  <div
+    id="buttons"
+  >
+    <button
+      className="btn btn-outline-primary"
+      disabled={false}
+      id="start_game"
+      onClick={[Function]}
+    >
+      Начать игру
+    </button>
+    <button
+      className="btn btn-primary"
+      disabled={true}
+      id="pull_extra_cards"
+      onClick={[Function]}
+    >
+      Выложить три карты
+    </button>
+    <button
+      className="btn btn-outline-primary"
+      disabled={true}
+      onClick={[Function]}
+    >
+      Подсказка
+    </button>
+  </div>
+</div>
+`;

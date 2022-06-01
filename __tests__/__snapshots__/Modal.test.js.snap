@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Modal renders 1`] = `
+<div
+  id="modal"
+>
+  <div
+    className="modal__content"
+  >
+    <h3>
+      Игра пройдена!
+    </h3>
+    <p>
+      Счёт: 0
+    </p>
+    <p>
+      Подсказок запрошено: 0
+    </p>
+    <p>
+      Времени пройдено: 
+    </p>
+    <button
+      className="btn btn-primary"
+      onClick={[Function]}
+    >
+      Ещё раз
+    </button>
+  </div>
+</div>
+`;
